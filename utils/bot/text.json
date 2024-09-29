@@ -1,0 +1,9 @@
+{
+  "welcome_message": "_Welcome to word of the day bot\\!_",
+  "word_added": "The word {} is added to the word list. You can find all saved words via @{}",
+  "word_removed": "The word {} is removed from the word list.",
+  "more_info":"<b>Context</b> <blockquote> • {} </blockquote> \n<b>Facts</b><blockquote> • {} </blockquote>",
+  "word_empty": "_Your list of saved words is empty\\._",
+  "words_list": "\n_To remove a word from saved list\\, click on the word and click \\'save ⭐️\\' button_"
+}
+

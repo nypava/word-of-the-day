@@ -1,1 +1,4 @@
-from utils.scraper import Scraper
+from .database import database
+
+
+
