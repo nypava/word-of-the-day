@@ -4,11 +4,17 @@ Word of the day is a simple automated script that posts new words from [Merriam-
 ## Deployment
 
 ### Installing dependencies
-
+#### Python dependencies
 ```
 pip install -r requirements.txt
 ```
+#### ImageMagick
+Debian: `apt install imagemagick`
+Arch:  `pacman -S imagemagick`
 
+#### Font
+Install noto sans font
+ 
 ### Setup
 Create .env file with the following variable:
 ```
