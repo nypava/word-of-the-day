@@ -50,7 +50,7 @@ def save_handler(callback: CallbackQuery):
 
         list_words_str = ""
         for word_data in database.get_save(user_id): #type: ignore
-            list_words_str += f"• [{word_data["word"]}]({word_data["message_url"]}) \n" 
+            list_words_str += f"• [{word_data['word']}]({word_data['message_url']}) \n" 
         
         list_words_str += texts["words_list"]
         bot.send_message(user_id, list_words_str, parse_mode="MarkdownV2", disable_web_page_preview=True)  
@@ -93,7 +93,7 @@ def list_saved(message: Message):
         return
 
     for word_data in database.get_save(user_id): #type: ignore
-        list_words_str += f"• [{word_data["word"]}]({word_data["message_url"]}) \n" 
+        list_words_str += f"• [{word_data['word']}]({word_data['message_url']}) \n" 
         
     list_words_str += texts["words_list"]
     bot.send_message(user_id, list_words_str, parse_mode="MarkdownV2", disable_web_page_preview=True)  
