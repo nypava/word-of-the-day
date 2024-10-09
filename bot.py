@@ -149,7 +149,7 @@ def send_post():
 
 send_post()
 
-schedule.every().day.at("14:10").do(send_post)
+schedule.every().day.at("12:00").do(send_post)
 
 def schedule_send():
     while True:
