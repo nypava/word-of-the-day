@@ -5,12 +5,11 @@ import os
 
 class VideoScraper:
     url = "https://yarn.co/yarn-find?text="
-    videos_list = [] 
 
     def __init__(self) -> None:
         pass
 
-    def _scrap_videos(self, word:str) -> None:
+    def _scrap_videos(self, word:str) -> list:
         soups = []
         videos_list = []
         
@@ -21,6 +20,7 @@ class VideoScraper:
         for soup in soups:
             for video_div in soup.find_all("div", "clip bg-t rel nomob"):
                 video_subtitle = video_div.div.find_all("a")[-1].div.string
+
                 if word.lower() not in video_subtitle.lower():
                     continue
 
@@ -34,14 +34,12 @@ class VideoScraper:
         videos_list.sort(key=lambda video: video["video_length"])
 
         if len(videos_list) >= 6:
-            self.videos_list = videos_list[-6:]
-            return 
+            return videos_list[-6:]
         
-        self.videos_list = videos_list
+        return videos_list
 
     def get_videos(self, word:str) -> list[dict]:
-        self._scrap_videos(word)
-        return self.videos_list
+        return self._scrap_videos(word)
     
     @staticmethod
     def cache_clr(dir) -> None:
@@ -49,8 +47,8 @@ class VideoScraper:
             file_path = os.path.join(dir, file)
             os.remove(file_path)
         
-    def download(self, dir) -> None:
-        for video in self.videos_list:
+    def download(self, dir, videos_list) -> None:
+        for video in videos_list:
             with requests.get(f"https://y.yarn.co/{video["video_id"]}.mp4") as response:
                 with open(os.path.join(dir, f"{video["video_id"]}.mp4"), "wb") as file:
                     for chunk in response.iter_content(chunk_size=8192):
