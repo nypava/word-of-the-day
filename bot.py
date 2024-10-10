@@ -44,16 +44,18 @@ def save_handler(callback: CallbackQuery):
         bot.answer_callback_query(callback.id, texts["word_added"].format(word, username), show_alert=True) 
     elif "list_words" in str(callback_data):
         if not database.get_save(user_id): 
-            bot.send_message(user_id, texts["word_empty"], parse_mode="MarkdownV2")
+            bot.send_message(user_id, texts["word_empty"], parse_mode="HTML")
             bot.answer_callback_query(callback.id, "")
             return
 
         list_words_str = ""
         for word_data in database.get_save(user_id): #type: ignore
-            list_words_str += f"• [{word_data['word']}]({word_data['message_url']}) \n" 
+            word = word_data['word']
+            message_url = word_data['message_url']
+            list_words_str += f"• <a href='{message_url}'>{word}</a>\n" 
         
         list_words_str += texts["words_list"]
-        bot.send_message(user_id, list_words_str, parse_mode="MarkdownV2", disable_web_page_preview=True)  
+        bot.send_message(user_id, list_words_str, parse_mode="HTML", disable_web_page_preview=True)  
         bot.answer_callback_query(callback.id, "")
 
 @bot.message_handler(commands=["start"])
@@ -61,7 +63,7 @@ def start_handler(message: Message):
     user_id = int(message.from_user.id) #type: ignore
     
     if len(str(message.text).split()) == 1:
-        bot.send_message(user_id, texts["welcome_message"], parse_mode="MarkdownV2", reply_markup=start_button)
+        bot.send_message(user_id, texts["welcome_message"], parse_mode="HTML", reply_markup=start_button)
         return
     
     splitted_text = (str(message.text).split()[-1]).split("_")
@@ -89,14 +91,16 @@ def list_saved(message: Message):
     list_words_str = ""
 
     if not database.get_save(user_id): 
-        bot.send_message(user_id, texts["word_empty"], parse_mode="MarkdownV2")
+        bot.send_message(user_id, texts["word_empty"], parse_mode="HTML")
         return
 
     for word_data in database.get_save(user_id): #type: ignore
-        list_words_str += f"• [{word_data['word']}]({word_data['message_url']}) \n" 
+        word = word_data['word']
+        message_url = word_data['message_url']
+        list_words_str += f"• <a href='{message_url}'>{word}</a>\n" 
         
     list_words_str += texts["words_list"]
-    bot.send_message(user_id, list_words_str, parse_mode="MarkdownV2", disable_web_page_preview=True)  
+    bot.send_message(user_id, list_words_str, parse_mode="HTML", disable_web_page_preview=True)  
 
 def send_post():
     vocab_datas = WordScraper()
