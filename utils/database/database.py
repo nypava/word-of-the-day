@@ -39,20 +39,21 @@ class Database:
     
     def add_save(self, user_id:int, word:str, message_url:str) -> None:
         saved_data = self.get_save(user_id) 
-        words = saved_data if saved_data else [] #type: ignore
-        words.append({"word": word, "message_url": message_url})
+        saved_data.append({"word": word, "message_url": message_url})
 
         self.saved_db.update_one(
             {"user_id": user_id}, 
             {
                 "$setOnInsert": {"user_id": user_id},
-                "$set": {"words": words}, 
+                "$set": {"words": saved_data}, 
             },
             upsert=True
         )
 
-    def get_save(self, user_id:int) -> list|None:
-        return self.saved_db.find_one({"user_id": user_id})["words"] #type: ignore
+    def get_save(self, user_id:int) -> list:
+        if self.saved_db.find_one({"user_id": user_id}):
+            return self.saved_db.find_one({"user_id": user_id})["words"] #type: ignore
+        return []
 
     def remove_save(self, user_id:int, word:str) -> None:
         words = self.get_save(user_id) 
