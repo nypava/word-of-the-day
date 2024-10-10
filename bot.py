@@ -105,7 +105,7 @@ def send_post():
     post_text = f"<b>{vocab_datas.word}</b>\n<i>{vocab_datas.pronunciation}</i>\n\n{vocab_datas.meaning}\n{vocab_datas.example.replace('//', '•')}"
 
     video_scrapper = VideoScraper()
-    videos_list = video_scrapper.get_videos("exorbitant")
+    videos_list = video_scrapper.get_videos(vocab_datas.word)
 
     video_scrapper.download('./cache', videos_list)
 
@@ -134,7 +134,7 @@ def send_post():
     video_editor = VideoEditor()
 
     for video in videos_list:
-        video_editor.add_subtitle(video["video_id"], video["video_subtitle"], "./cache", "exorbitant")
+        video_editor.add_subtitle(video["video_id"], video["video_subtitle"], "./cache", vocab_datas.word)
     
     video_editor.concatenate_videos("./cache/result.mp4")
     
