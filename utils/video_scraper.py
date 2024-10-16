@@ -23,7 +23,7 @@ class VideoScraper:
 
                 if word.lower() not in video_subtitle.lower():
                     continue
-
+                
                 video_id = video_div.div.a["href"].split("/")[-1]
                 video_length = "".join(re.findall(r"\d+[.]\d+|\d+", str(video_div.div.a.div.find("div", "play-time ab fwb").contents[-1])))
 
@@ -49,6 +49,9 @@ class VideoScraper:
         
     def download(self, dir, videos_list) -> None:
         for video in videos_list:
+            if not os.path.exists(os.path.join(dir, f"{video['video_id']}.mp4")):
+                continue
+
             with requests.get(f"https://y.yarn.co/{video['video_id']}.mp4") as response:
                 with open(os.path.join(dir, f"{video['video_id']}.mp4"), "wb") as file:
                     for chunk in response.iter_content(chunk_size=8192):
