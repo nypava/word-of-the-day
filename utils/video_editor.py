@@ -3,12 +3,11 @@ import os
 import re
 
 class VideoEditor:
-    captioned_videos = []
     
     def __init__(self) -> None:
         pass
 
-    def add_subtitle(self, video_id: str, caption: str, dir: str, word: str) -> None:
+    def add_subtitle(self, video_id: str, caption: str, dir: str, word: str) -> str|None:
         video_clip = VideoFileClip(os.path.join("./cache/", f"{video_id}.mp4"))
 
         regex_word = re.findall(r"\w*" + word + r"\w*", caption, re.IGNORECASE)[0]
@@ -38,11 +37,11 @@ class VideoEditor:
         captioned_video_dir = os.path.join(dir, f"{video_id}-captioned.mp4")
         captioned_video.write_videofile(captioned_video_dir)
 
-        self.captioned_videos.append(captioned_video_dir)
+        return captioned_video_dir
 
-    def concatenate_videos(self, file_path):
+    def concatenate_videos(self, file_path:str, captioned_videos:list) -> None:
         clips_list = []
-        for video in self.captioned_videos:
+        for video in captioned_videos:
             clips_list.append(VideoFileClip(video))
 
         concatenated_video =  concatenate_videoclips(clips_list, method="compose")

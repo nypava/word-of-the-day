@@ -49,9 +49,6 @@ class VideoScraper:
         
     def download(self, dir, videos_list) -> None:
         for video in videos_list:
-            if not os.path.exists(os.path.join(dir, f"{video['video_id']}.mp4")):
-                continue
-
             with requests.get(f"https://y.yarn.co/{video['video_id']}.mp4") as response:
                 with open(os.path.join(dir, f"{video['video_id']}.mp4"), "wb") as file:
                     for chunk in response.iter_content(chunk_size=8192):

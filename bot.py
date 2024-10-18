@@ -136,11 +136,12 @@ def send_post():
         return 
 
     video_editor = VideoEditor()
-
+      
+    captioned_videos = [] 
     for video in videos_list:
-        video_editor.add_subtitle(video["video_id"], video["video_subtitle"], "./cache", vocab_datas.word)
+        captioned_videos.append(video_editor.add_subtitle(video["video_id"], video["video_subtitle"], "./cache", vocab_datas.word))
     
-    video_editor.concatenate_videos("./cache/result.mp4")
+    video_editor.concatenate_videos("./cache/result.mp4", captioned_videos)
     
     with open("./cache/result.mp4", "rb+") as file:
         bot.send_video(str(channel_id), 
@@ -150,8 +151,6 @@ def send_post():
                        reply_markup=post_button(str(bot.get_me().username), vocab_datas.word))
 
     video_scrapper.cache_clr("./cache")
-
-send_post()
 
 schedule.every().day.at("12:00").do(send_post)
 
