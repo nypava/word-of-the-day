@@ -1,4 +1,6 @@
 __pycache__/
-.env
 env/
+.direnv/
+
+.env
 .git
