@@ -1,6 +1,9 @@
 from moviepy.editor import TextClip, VideoFileClip, CompositeVideoClip, concatenate_videoclips
 import os 
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 class VideoEditor:
     
@@ -27,8 +30,9 @@ class VideoEditor:
                 stroke_color="black",
                 stroke_width=2
             )
-        except Exception:
-            return
+        except Exception as e:
+            logger.error(e)
+            return 
         
         caption_clip = caption_clip.set_position(("center", "bottom"), relative=True)
         
@@ -42,7 +46,8 @@ class VideoEditor:
     def concatenate_videos(self, file_path:str, captioned_videos:list) -> None:
         clips_list = []
         for video in captioned_videos:
-            clips_list.append(VideoFileClip(video))
+            if video:
+                clips_list.append(VideoFileClip(video))
 
         concatenated_video =  concatenate_videoclips(clips_list, method="compose")
         concatenated_video.write_videofile(file_path)

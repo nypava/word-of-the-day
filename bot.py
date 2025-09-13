@@ -10,9 +10,11 @@ from dotenv import load_dotenv
 from json import load
 import schedule, os, time
 import threading 
+import logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
-
 bot_token = os.getenv("bot_token")
 channel_id = os.getenv("channel_id")
 mongo_token = os.getenv("mongo_token")
@@ -109,12 +111,17 @@ def send_post():
     post_text = f"<b>{vocab_datas.word}</b>\n<i>{vocab_datas.pronunciation}</i>\n\n{vocab_datas.meaning}\n{vocab_datas.example.replace('//', '•')}"
 
     video_scrapper = VideoScraper()
+    
+    logging.info("Scrapping videos links ..")
     videos_list = video_scrapper.get_videos(vocab_datas.word)
 
+    logging.info("Downloading videos ..")
     video_scrapper.download('./cache', videos_list)
 
-    questions = question_generator(str(gemini_key), vocab_datas.word)
+    logging.info("Generating question ..")
 
+    questions = question_generator(str(gemini_key), vocab_datas.word)
+    
     database.add_vocal(
         vocab_datas.word, 
         vocab_datas.pronunciation, 
@@ -125,7 +132,6 @@ def send_post():
         questions
     )
 
-   
     if not videos_list: 
         with open("./assets/video-error.png", "rb+") as file:
             bot.send_photo(str(channel_id), 
@@ -149,17 +155,26 @@ def send_post():
                        video=file, 
                        parse_mode="HTML", 
                        reply_markup=post_button(str(bot.get_me().username), vocab_datas.word))
-
+    
+    logging.info("Done sending video")
     video_scrapper.cache_clr("./cache")
 
-schedule.every().day.at("12:00").do(send_post)
+if __name__ == "__main__":
+    logging.basicConfig(format='%(asctime)s,%(msecs)03d %(name)s %(levelname)s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S',
+                        handlers=[
+                            logging.FileHandler("word-of-the-day.log"),
+                            logging.StreamHandler()
+                        ],
+                        level=logging.INFO)
 
-def schedule_send():
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    schedule.every().day.at("12:00").do(send_post)
 
-schedule_thread = threading.Thread(target=schedule_send)
-schedule_thread.start()
+    def schedule_send():
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
-bot.infinity_polling()
+    schedule_thread = threading.Thread(target=schedule_send)
+    schedule_thread.start()
+    bot.infinity_polling()
