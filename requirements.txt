@@ -1,7 +1,0 @@
-beautifulsoup4
-pytelegrambotapi
-python-dotenv
-schedule
-moviepy
-pymongo
-google-generativeai
