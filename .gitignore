@@ -2,5 +2,6 @@ __pycache__/
 env/
 .direnv/
 
+*.log
 .env
 .git
