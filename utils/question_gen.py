@@ -1,4 +1,6 @@
-from google import generativeai
+from google import genai
+from google.genai import types
+
 question_model =  """
 1, What is a synonym for 'decent'?
 A, acceptable
@@ -24,10 +26,8 @@ Answer 3: C
 """ 
 
 def question_generator(api_key: str, word:str) -> dict:
+    client = genai.Client(api_key=api_key) 
     success = False
-
-    generativeai.configure(api_key=api_key)
-    model = generativeai.GenerativeModel('gemini-pro')
 
     prompt = str(f"""
     Can you make a synonym, antonym and usage in context question for a word '{word}'. I want you to make them all choice.
@@ -40,7 +40,7 @@ def question_generator(api_key: str, word:str) -> dict:
 
     while not success:
         try:
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(model='gemini-2.0-flash-001', contents=prompt)
             questions = str(response.text).split("\n\n")[:3]
             answers = str(response.text).split("\n\n")[-1]
             answers_splitted = answers.split("\n")
