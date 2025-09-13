@@ -66,6 +66,8 @@
               python
               pkgs.uv
               pkgs.just
+              pkgs.imagemagick
+              pkgs.noto-fonts
             ];
             env =
               {
