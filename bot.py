@@ -1,3 +1,4 @@
+from typing import final
 from telebot.types import CallbackQuery, Message, InputPollOption
 from telebot import TeleBot
 from utils.word_scraper import WordScraper
@@ -11,7 +12,7 @@ from json import load
 import schedule, os, time
 import threading 
 import logging
-
+import requests 
 logger = logging.getLogger(__name__)
 
 load_dotenv()
@@ -72,7 +73,15 @@ def start_handler(message: Message):
 
     if splitted_text[0] == "word":
         word_data:dict = database.get_vocal(splitted_text[-1])
-        bot.send_audio(user_id, audio=word_data["podcast"])
+        impure_audio_url = word_data["podcast"]
+
+        try: 
+            logger.info(word_data["podcast"])
+            audio_url = requests.head(impure_audio_url, allow_redirects=True).url
+            bot.send_audio(user_id, audio=audio_url)
+        except Exception as e:
+            logger.error(e)
+
         bot.send_message(user_id, texts["more_info"].format(word_data["context"], word_data["facts"]), parse_mode="HTML" )
 
     elif splitted_text[0] == "quiz":
@@ -167,7 +176,7 @@ if __name__ == "__main__":
                             logging.StreamHandler()
                         ],
                         level=logging.INFO)
-
+    
     schedule.every().day.at("12:00").do(send_post)
 
     def schedule_send():
